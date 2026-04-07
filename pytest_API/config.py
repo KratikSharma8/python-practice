@@ -1,0 +1,1 @@
+API_KEY = "reqres_7cea754fe80a4c68a6492ad68918210a"
