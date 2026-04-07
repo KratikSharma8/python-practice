@@ -13,7 +13,11 @@ Learning Python from scratch and writing automated tests with pytest.
 - mini_program.py — combining everything
 - test_math.py — first pytest tests
 - test_user.py — testing functions and dicts with pytest
+- first_api_call.py - api calling and fetching response
 
 ## How to run the tests
 pip install pytest
 python -m pytest -v
+
+## How to install services
+pip install services
