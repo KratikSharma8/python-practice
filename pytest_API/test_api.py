@@ -93,3 +93,63 @@ def test_negative_user_id_returns_404():
     response = requests.get(f'{Base_url}/api/users/-1')
     assert response.status_code == 404
 
+def test_create_user_returns_201():
+    new_user = {
+        'name': "Rakesh Sharma",
+        'email': "rakesh@example.com",
+        'role': "User"
+    }
+    response = requests.post(f'{Base_url}/api/users', json=new_user)
+    assert response.status_code == 201
+
+def test_create_user_has_id():
+    new_user = {
+        'name': "Rakesh Sharma",
+        'email': "rakesh@example.com",
+        'role': "User"
+    }
+    response = requests.post(f'{Base_url}/api/users', json=new_user)
+    data = response.json()
+    assert 'id' in data
+
+def test_create_user_name_matches():
+    new_user = {
+        'name': "Rakesh Sharma",
+        'email': "rakesh@example.com",
+        'role': "User"
+    }
+    response = requests.post(f'{Base_url}/api/users', json=new_user)
+    data = response.json()
+    assert data['name'] == "Rakesh Sharma"
+
+def test_create_user_email_matches():
+    new_user = {
+        'name': "Rakesh Sharma",
+        'email': "rakesh@example.com",
+        'role': "User"
+    }
+    response = requests.post(f'{Base_url}/api/users', json=new_user)
+    data = response.json()
+    assert data['email'] == "rakesh@example.com"
+
+def test_create_user_role_matches():
+    new_user = {
+        'name': "Rakesh Sharma",
+        'email': "rakesh@example.com",
+        'role': "User"
+    }
+    response = requests.post(f'{Base_url}/api/users', json=new_user)
+    data = response.json()
+    assert data['role'] == "User"
+
+def test_create_user_with_empty_name():
+    new_user = {
+        'name': "",
+        'email': "rakesh@example.com",
+        'role': "User"
+    }
+    response = requests.post(f'{Base_url}/api/users', json=new_user)
+    data = response.json()
+    assert response.status_code == 201
+    assert data['name'] == ""
+    

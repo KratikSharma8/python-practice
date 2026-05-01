@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -28,4 +29,4 @@ def create_user(user: dict):
         "role": user.get("role", "user")
     }
     users.append(new_user)
-    return new_user
+    return JSONResponse(content=new_user, status_code=201)
