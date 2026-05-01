@@ -1,0 +1,9 @@
+If any test fails you don't need to run the whole suite. Run just that one:
+python -m pytest <file_name>.py::<failed_function_name> -v
+
+Summary of all failed cases
+python -m <file_name>.py -v --tb=short
+
+Pytest run command
+python -m pytest .\pytest_API\<file_name>.py -v
+

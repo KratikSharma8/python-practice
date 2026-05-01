@@ -52,5 +52,44 @@ def test_user_list_is_not_empty():
 def test_user_list_total_is_correct():
     response = requests.get(f'{Base_url}/api/users')
     data = response.json()
-    assert data['total'] == 2
+    assert data['total'] == 3
+
+def test_each_user_has_required_fields():
+    response = requests.get(f'{Base_url}/api/users')
+    data = response.json()
+    for user in data['data']:
+        assert 'id' in user
+        assert 'name' in user
+        assert 'email' in user
+        assert 'role' in user
+
+def test_each_user_email_is_valid():
+    response = requests.get(f'{Base_url}/api/users')
+    data = response.json()
+    for user in data['data']:
+        assert '@' in user['email']
+
+def test_each_user_has_a_role():
+    response = requests.get(f'{Base_url}/api/users')
+    data = response.json()
+    for user in data['data']:
+        assert user['role'] in ['admin', 'user']
+
+def test_invalud_user_returns_404():
+    response = requests.get(f'{Base_url}/api/users/999')
+    assert response.status_code == 404
+
+def test_invalid_user_returns_error_detail():
+    response = requests.get(f'{Base_url}/api/users/999')
+    data = response.json()
+    assert 'detail' in data
+    assert data['detail'] == 'User not found'
+
+def test_user_zero_returns_404():
+    response = requests.get(f'{Base_url}/api/users/0')
+    assert response.status_code == 404
+
+def test_negative_user_id_returns_404():
+    response = requests.get(f'{Base_url}/api/users/-1')
+    assert response.status_code == 404
 
