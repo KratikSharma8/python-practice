@@ -1,41 +1,27 @@
 import requests
-import pytest
 
-Base_url = "http://127.0.0.1:8000"
 
-@pytest.fixture
-def api_base_url():
-    return Base_url
-
-@pytest.fixture
-def new_user():
-    return {
-        'name': "Rakesh Sharma",
-        'email': "rakesh@example.com",
-        'role': "User"
-    }
-
-def test_get_user_returns_200():
-    response = requests.get(f'{Base_url}/api/users/1')
+def test_get_user_returns_200(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users/1')
     assert response.status_code == 200
 
-def test_get_user_has_data_key():
-    response = requests.get(f'{Base_url}/api/users/1')
+def test_get_user_has_data_key(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users/1')
     data = response.json()
     assert 'data' in data
 
-def test_user_has_email():
-    response = requests.get(f'{Base_url}/api/users/1')
+def test_user_has_email(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users/1')
     data = response.json()
     assert 'email' in data['data']
 
-def test_user_email_has_at_symbol():
-    response = requests.get(f'{Base_url}/api/users/1')
+def test_user_email_has_at_symbol(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users/1')
     data = response.json()
     assert '@' in data['data']['email']
 
-def test_user_name_is_correct():
-    response = requests.get(f'{Base_url}/api/users/1')
+def test_user_name_is_correct(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users/1')
     data = response.json()
     assert data['data']['name'] == 'Kratik Sharma'
 
@@ -52,23 +38,23 @@ def test_get_all_users_returns_200(api_base_url):
     response = requests.get(f'{api_base_url}/api/users')
     assert response.status_code == 200
 
-def test_user_list_has_total_key():
-    response = requests.get(f'{Base_url}/api/users')
+def test_user_list_has_total_key(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users')
     data = response.json()
     assert 'total' in data
 
-def test_user_list_is_not_empty():
-    response = requests.get(f'{Base_url}/api/users')
+def test_user_list_is_not_empty(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users')
     data = response.json()
     assert len(data['data']) > 0
 
-def test_user_list_total_is_correct():
-    response = requests.get(f'{Base_url}/api/users')
+def test_user_list_total_is_correct(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users')
     data = response.json()
     assert data['total'] == 3
 
-def test_each_user_has_required_fields():
-    response = requests.get(f'{Base_url}/api/users')
+def test_each_user_has_required_fields(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users')
     data = response.json()
     for user in data['data']:
         assert 'id' in user
@@ -76,34 +62,34 @@ def test_each_user_has_required_fields():
         assert 'email' in user
         assert 'role' in user
 
-def test_each_user_email_is_valid():
-    response = requests.get(f'{Base_url}/api/users')
+def test_each_user_email_is_valid(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users')
     data = response.json()
     for user in data['data']:
         assert '@' in user['email']
 
-def test_each_user_has_a_role():
-    response = requests.get(f'{Base_url}/api/users')
+def test_each_user_has_a_role(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users')
     data = response.json()
     for user in data['data']:
         assert user['role'] in ['admin', 'user']
 
-def test_invalud_user_returns_404():
-    response = requests.get(f'{Base_url}/api/users/999')
+def test_invalid_user_returns_404(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users/999')
     assert response.status_code == 404
 
-def test_invalid_user_returns_error_detail():
-    response = requests.get(f'{Base_url}/api/users/999')
+def test_invalid_user_returns_error_detail(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users/999')
     data = response.json()
     assert 'detail' in data
     assert data['detail'] == 'User not found'
 
-def test_user_zero_returns_404():
-    response = requests.get(f'{Base_url}/api/users/0')
+def test_user_zero_returns_404(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users/0')
     assert response.status_code == 404
 
-def test_negative_user_id_returns_404():
-    response = requests.get(f'{Base_url}/api/users/-1')
+def test_negative_user_id_returns_404(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users/-1')
     assert response.status_code == 404
 
 def test_create_user_returns_201(api_base_url, new_user):
@@ -130,13 +116,16 @@ def test_create_user_role_matches(api_base_url, new_user):
     data = response.json()
     assert data['role'] == new_user['role']
 
-def test_create_user_with_empty_name():
+def test_create_user_with_empty_name(api_base_url):
     new_user = {
         'name': "",
         'email': "kratik@example.com"
     }
-    response = requests.post(f'{Base_url}/api/users', json=new_user)
+    response = requests.post(f'{api_base_url}/api/users', json=new_user)
     data = response.json()
     assert response.status_code == 201
     assert data['name'] == ""
     
+def test_get_user_test_fixture(get_user_1):
+    assert get_user_1['data']['name'] == 'Kratik Sharma'
+
