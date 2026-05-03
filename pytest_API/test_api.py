@@ -1,6 +1,19 @@
 import requests
+import pytest
 
 Base_url = "http://127.0.0.1:8000"
+
+@pytest.fixture
+def api_base_url():
+    return Base_url
+
+@pytest.fixture
+def new_user():
+    return {
+        'name': "Rakesh Sharma",
+        'email': "rakesh@example.com",
+        'role': "User"
+    }
 
 def test_get_user_returns_200():
     response = requests.get(f'{Base_url}/api/users/1')
@@ -26,17 +39,17 @@ def test_user_name_is_correct():
     data = response.json()
     assert data['data']['name'] == 'Kratik Sharma'
 
-def test_user_not_found_returns_404():
-    response = requests.get(f'{Base_url}/api/users/999')
+def test_user_not_found_returns_404(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users/999')
     assert response.status_code == 404
 
-def test_missing_user_has_error_message():
-    response = requests.get(f'{Base_url}/api/users/999')
+def test_missing_user_has_error_message(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users/999')
     data = response.json()
     assert 'detail' in data
 
-def test_get_all_users_returns_200():
-    response = requests.get(f'{Base_url}/api/users')
+def test_get_all_users_returns_200(api_base_url):
+    response = requests.get(f'{api_base_url}/api/users')
     assert response.status_code == 200
 
 def test_user_list_has_total_key():
@@ -93,60 +106,34 @@ def test_negative_user_id_returns_404():
     response = requests.get(f'{Base_url}/api/users/-1')
     assert response.status_code == 404
 
-def test_create_user_returns_201():
-    new_user = {
-        'name': "Rakesh Sharma",
-        'email': "rakesh@example.com",
-        'role': "User"
-    }
-    response = requests.post(f'{Base_url}/api/users', json=new_user)
+def test_create_user_returns_201(api_base_url, new_user):
+    response = requests.post(f'{api_base_url}/api/users', json=new_user)
     assert response.status_code == 201
 
-def test_create_user_has_id():
-    new_user = {
-        'name': "Rakesh Sharma",
-        'email': "rakesh@example.com",
-        'role': "User"
-    }
-    response = requests.post(f'{Base_url}/api/users', json=new_user)
+def test_create_user_has_id(api_base_url, new_user):
+    response = requests.post(f'{api_base_url}/api/users', json=new_user)
     data = response.json()
     assert 'id' in data
 
-def test_create_user_name_matches():
-    new_user = {
-        'name': "Rakesh Sharma",
-        'email': "rakesh@example.com",
-        'role': "User"
-    }
-    response = requests.post(f'{Base_url}/api/users', json=new_user)
+def test_create_user_name_matches(api_base_url, new_user):
+    response = requests.post(f'{api_base_url}/api/users', json=new_user)
     data = response.json()
-    assert data['name'] == "Rakesh Sharma"
+    assert data['name'] == new_user['name']
 
-def test_create_user_email_matches():
-    new_user = {
-        'name': "Rakesh Sharma",
-        'email': "rakesh@example.com",
-        'role': "User"
-    }
-    response = requests.post(f'{Base_url}/api/users', json=new_user)
+def test_create_user_email_matches(api_base_url, new_user):
+    response = requests.post(f'{api_base_url}/api/users', json=new_user)
     data = response.json()
-    assert data['email'] == "rakesh@example.com"
+    assert data['email'] == new_user['email']
 
-def test_create_user_role_matches():
-    new_user = {
-        'name': "Rakesh Sharma",
-        'email': "rakesh@example.com",
-        'role': "User"
-    }
-    response = requests.post(f'{Base_url}/api/users', json=new_user)
+def test_create_user_role_matches(api_base_url, new_user):
+    response = requests.post(f'{api_base_url}/api/users', json=new_user)
     data = response.json()
-    assert data['role'] == "User"
+    assert data['role'] == new_user['role']
 
 def test_create_user_with_empty_name():
     new_user = {
         'name': "",
-        'email': "rakesh@example.com",
-        'role': "User"
+        'email': "kratik@example.com"
     }
     response = requests.post(f'{Base_url}/api/users', json=new_user)
     data = response.json()
